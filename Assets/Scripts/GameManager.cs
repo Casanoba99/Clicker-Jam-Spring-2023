@@ -15,15 +15,18 @@ public class GameManager : MonoBehaviour
 
     Coroutine aumentoCafe, restaCafe;
 
-    public float tiempo;
+    int cafeAbsoluto;
 
-    public float cafeTotal;
+    public float tiempo;
+    public int cafeTotal;
 
     [Header("Textos Cafe")]
     public TextMeshProUGUI cafeNumero;
     public string cafesNumeroTxt;
     public TextMeshProUGUI cafesSegundo;
     public string cafesSegundoTxt;
+    public TextMeshProUGUI total;
+    public string totalTxt;
 
     [Header("Mejoras Activas")]
     public int cafeXclick;
@@ -39,6 +42,11 @@ public class GameManager : MonoBehaviour
     public GameObject tazaPfb;
     public Transform taza;
 
+    [Header("Desplegable")]
+    public bool desplegar;
+    public Animator desplegable;
+    public TextMeshProUGUI desplegarTMP;
+
     [Header("Audio")]
     public AudioMixerGroup mixer;
     public AudioSource tazaAudio;
@@ -49,10 +57,19 @@ public class GameManager : MonoBehaviour
 
         cafeNumero.text = cafeTotal + cafesNumeroTxt;
         cafesSegundo.text = cafesSegundoTxt + cafeXsegundo;
+        cafeAbsoluto = 0;
+        total.text = totalTxt + cafeAbsoluto;
     }
 
     void Update()
     {
+        // Capturas
+        if (Input.GetKeyDown(KeyCode.F12))
+        {
+            string date = System.DateTime.Now.ToString("dd-MM-yy_HH-mm-ss");
+            ScreenCapture.CaptureScreenshot(Application.persistentDataPath + "/Screenshot_" + date + ".png");
+        }
+
         if (cafeXsegundo > 0 && restar == false)
         {
             Start_CafePorSegundo();
@@ -86,6 +103,9 @@ public class GameManager : MonoBehaviour
         _ = Instantiate(tazaPfb, taza.position, Quaternion.identity, taza);
         cafeTotal += cafeXclick;
         cafeNumero.text = cafeTotal + cafesNumeroTxt;
+
+        cafeAbsoluto += cafeXclick;
+        total.text = totalTxt + cafeAbsoluto;
     }
 
     // Mejora pasiva
@@ -97,8 +117,12 @@ public class GameManager : MonoBehaviour
     IEnumerator CafePorSegundo()
     {
         yield return new WaitForSecondsRealtime(1);
+
         cafeTotal += cafeXsegundo;
         cafeNumero.text = cafeTotal + cafesNumeroTxt;
+
+        cafeAbsoluto += cafeXsegundo;
+        total.text = totalTxt + cafeAbsoluto;
 
         aumentoCafe = null;
     }
@@ -112,7 +136,7 @@ public class GameManager : MonoBehaviour
     IEnumerator RestarCafe()
     {
         yield return new WaitForSecondsRealtime(1);
-        if (cafeTotal > 0) cafeTotal--;
+        if (cafeTotal > 0) cafeTotal -= cafeXsegundo;
         cafeNumero.text = cafeTotal + cafesNumeroTxt;
 
         restaCafe = null;
@@ -132,4 +156,13 @@ public class GameManager : MonoBehaviour
         else mixer.audioMixer.SetFloat("Sonido", -80);
     }
     #endregion
+
+    public void Desplegar()
+    {
+        desplegar = !desplegar;
+        desplegable.SetBool("Mover", desplegar);
+
+        if (desplegar) desplegarTMP.text = "<";
+        else desplegarTMP.text= ">";
+    }
 }
