@@ -137,6 +137,8 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(1);
         if (cafeTotal > 0) cafeTotal -= cafeXsegundo;
+        if (cafeTotal <= 0) cafeTotal = 0;
+
         cafeNumero.text = cafeTotal + cafesNumeroTxt;
 
         restaCafe = null;
