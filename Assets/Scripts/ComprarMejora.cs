@@ -50,7 +50,7 @@ public class ComprarMejora : MonoBehaviour
 
         GameManager gm = GameManager.gm;
         // Actualizacion de los textos
-        gm.cafeXsegundo += mejora.cafeSegundo;
+        gm.cafeXsegundo += mejora.cafeSegundo * gm.multiploUltimo;
         gm.cafesSegundo.text = gm.cafesSegundoTxt + gm.cafeXsegundo;
 
         gm.cafeTotal -= precio;
@@ -62,10 +62,10 @@ public class ComprarMejora : MonoBehaviour
         precio += incremento;
         precioTxt.text = precio.ToString();
 
-        compras++;
-        produccionTotal += mejora.cafeSegundo;
+        compras += 1 * gm.multiploUltimo;
+        produccionTotal += mejora.cafeSegundo * gm.multiploUltimo;
 
-        ActualizarInfo();
+        ActualizarPopup();
         if (compras % 10 == 0) ActivarObjetos();
 
         if (primeraCompra)
@@ -82,13 +82,11 @@ public class ComprarMejora : MonoBehaviour
         ratonPos.x = .5f;
 
         popUpActual = Instantiate(popUpPfb, ratonPos, Quaternion.identity, canvas);
-        popUpActual.name = "Pop Up";
-        ActualizarInfo();
+        ActualizarPopup();
     }
 
-    public void ActualizarInfo()
+    public void ActualizarPopup()
     {
-        GameManager gm = GameManager.gm;
         PopUp popup = popUpActual.GetComponent<PopUp>();
 
         popup.compradosTMP.text = popup.compradosTxt + compras;

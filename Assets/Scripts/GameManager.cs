@@ -7,11 +7,13 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    #region Singleton
     public static GameManager gm;
     private void Awake()
     {
         gm = this;
     }
+    #endregion
 
     Coroutine aumentoCafe, restaCafe;
 
@@ -42,6 +44,10 @@ public class GameManager : MonoBehaviour
     public GameObject tazaPfb;
     public Transform taza;
 
+    [Header("Multiplicador")]
+    public int multiploUltimo;
+    public ComprarMejora[] mejoras;
+
     [Header("Desplegable")]
     public bool desplegar;
     public Animator desplegable;
@@ -54,6 +60,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         cafeXclick = 1;
+        multiploUltimo = 1;
 
         cafeNumero.text = cafeTotal + cafesNumeroTxt;
         cafesSegundo.text = cafesSegundoTxt + cafeXsegundo;
@@ -158,6 +165,18 @@ public class GameManager : MonoBehaviour
         else mixer.audioMixer.SetFloat("Sonido", -80);
     }
     #endregion
+
+    public void Multiplicador(int m)
+    {
+        for (int i = 0; i < mejoras.Length; i++)
+        {
+            int precio = mejoras[i].precio / multiploUltimo;
+            mejoras[i].precio = precio * m;
+            mejoras[i].precioTxt.text = mejoras[i].precio.ToString();
+        }
+
+        multiploUltimo = m;
+    }
 
     public void Desplegar()
     {
